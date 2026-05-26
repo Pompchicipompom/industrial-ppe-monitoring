@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+
+# Секреты
+.env
+*.env
+
+# Веса моделей и бинарники
+*.pt
+*.onnx
+*.engine
+*.bin
+*.xml
+*.tflite
+*.pb
+
+# Видео и архивы
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+
+# Локальные данные
+input/
+output/
+runs/
+datasets/
+data/
+
+# Веса (но оставляем README в models/)
+models/*
+!models/README.md
+!models/.gitkeep
+
+# Логи
+*.log
+*.tmp
+
+# IDE / системные
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.pytest_cache/
+.ipynb_checkpoints/

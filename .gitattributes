@@ -1,0 +1,21 @@
+# Согласование переводов строк (предотвращает шум при cross-platform работе)
+* text=auto eol=lf
+
+# Явная разметка типов файлов
+*.py    text eol=lf
+*.md    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.txt   text eol=lf
+*.csv   text eol=lf
+*.json  text eol=lf
+
+# Бинарные форматы (не должны попадать в репозиторий, но на всякий случай)
+*.pt    binary
+*.onnx  binary
+*.bin   binary
+*.engine binary
+*.mp4   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary

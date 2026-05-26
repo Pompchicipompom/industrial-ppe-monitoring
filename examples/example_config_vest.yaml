@@ -1,0 +1,32 @@
+# Пример конфига для проверки запуска vest-режима.
+# Для финальной оценки используйте configs/production_vest.yaml.
+
+pipeline:
+  source: "input/demo.mp4"
+  display_preview: false
+  sampling_fps: 10.0
+  mode: "motion_gated"
+  force_infer_every_n_frames: 30
+  max_frames: 300
+
+model:
+  detector_backend: "triple_class"
+  weights_path: "models/helmet_vest_repo_best.pt"
+  conf_threshold: 0.10
+  imgsz: 640
+  device: ""
+  class_name_aliases:
+    "Safety Vest": "vest"
+    "NO-Safety Vest": "no_vest"
+
+event_logic:
+  no_vest_consecutive_frames: 5
+  no_vest_seconds_threshold: 0.4
+  cooldown_seconds: 3.0
+
+output:
+  video_path: "output/processed.mp4"
+  events_csv: "output/events.csv"
+  events_jsonl: "output/events.jsonl"
+  metrics_csv: "output/frame_metrics.csv"
+  profile_json: "output/runtime_profile.json"

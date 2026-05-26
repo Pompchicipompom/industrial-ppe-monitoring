@@ -1,0 +1,30 @@
+# Минимальный пример конфига для проверки запуска.
+# Использует hardhat-детектор и быстрый sampling; все необязательные
+# параметры берутся из значений по умолчанию (см. ppe_monitoring/config.py).
+
+pipeline:
+  source: "input/demo.mp4"
+  display_preview: false
+  sampling_fps: 10.0
+  mode: "motion_gated"
+  force_infer_every_n_frames: 30
+  max_frames: 300                # ограничение для быстрой проверки
+
+model:
+  detector_backend: "triple_class"
+  weights_path: "models/hardhat_detection_yolo11_200_epochs_best_02032025.pt"
+  conf_threshold: 0.20
+  imgsz: 640
+  device: ""
+
+event_logic:
+  no_hardhat_consecutive_frames: 12
+  no_hardhat_seconds_threshold: 1.0
+  cooldown_seconds: 3.0
+
+output:
+  video_path: "output/processed.mp4"
+  events_csv: "output/events.csv"
+  events_jsonl: "output/events.jsonl"
+  metrics_csv: "output/frame_metrics.csv"
+  profile_json: "output/runtime_profile.json"

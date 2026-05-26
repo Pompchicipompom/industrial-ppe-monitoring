@@ -1,0 +1,85 @@
+# Финальный production-конфиг детекции событий no_hardhat.
+#
+# Используется YOLO-детектор с тремя классами person/head/hardhat.
+# Веса не входят в репозиторий: см. models/README.md.
+#
+# Логика:
+#   1. Каждые N кадров (motion-gated) запускается inference.
+#   2. Person tracker присваивает стабильные track_id людям.
+#   3. Каска привязывается к области головы человека.
+#   4. Если у трека > consecutive_frames кадров подряд нет каски и
+#      длительность нарушения превышает seconds_threshold, фиксируется
+#      no_hardhat-нарушение.
+#   5. После сохранения raw events.csv main.py применяет
+#      EventConsolidatorV3, чтобы объединить дубликаты одного эпизода
+#      (track-switch / temporal hold) в одно итоговое событие.
+
+pipeline:
+  source: "input/demo.mp4"
+  resize_to: [640, 640]
+  display_preview: false
+  sampling_fps: 12.0
+  mode: "motion_gated"
+  force_infer_every_n_frames: 30
+  reuse_tracks_max_gap_frames: 45
+  max_track_stale_frames: 45
+  max_frames: 0
+  debug_visualization: false
+  debug_person_filter_stats: false
+
+motion:
+  enabled: true
+  min_ratio: 0.0015
+  min_ratio_off: 0.0008
+  hold_frames_after_motion: 10
+
+model:
+  detector_backend: "triple_class"
+  weights_path: "models/hardhat_detection_yolo11_200_epochs_best_02032025.pt"
+  conf_threshold: 0.18
+  person_min_conf: 0.22
+  roi_head_hardhat_conf: 0.10
+  imgsz: 640
+  roi_imgsz: 320
+  use_half: false
+  device: ""                  # автоматически (CUDA если доступна, иначе CPU)
+  enable_person_fallback: true
+  person_fallback_weights_path: "yolov8s.pt"
+  person_fallback_conf: 0.12
+  person_fallback_imgsz: 640
+
+roi:
+  enabled: true
+  person_roi_inference_enabled: true
+  global_inference_in_roi: true
+  person_center_must_be_in_roi: true
+
+event_logic:
+  # Подтверждение нарушения no_hardhat
+  hardhat_confirm_frames: 2
+  hardhat_revoke_frames: 4
+  lock_after_confirm: true
+  no_hardhat_consecutive_frames: 18
+  no_hardhat_seconds_threshold: 1.8
+  cooldown_frames: 90
+  cooldown_seconds: 3.0
+  # Жилет отключён в этой задаче
+  no_vest_consecutive_frames: 9999
+  no_vest_seconds_threshold: 9999.0
+
+tracking:
+  history_len: 10
+  max_area_growth_ratio: 1.9
+  max_width_growth_ratio: 1.45
+  max_height_growth_ratio: 1.45
+  min_iou_if_growth_triggered: 0.12
+  blend_alpha: 0.35
+  transfer_iou_threshold: 0.35
+  max_transfer_gap_frames: 20
+
+output:
+  video_path: "output/processed.mp4"
+  events_csv: "output/events.csv"
+  events_jsonl: "output/events.jsonl"
+  metrics_csv: "output/frame_metrics.csv"
+  profile_json: "output/runtime_profile.json"

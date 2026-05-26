@@ -1,0 +1,11 @@
+# Минимальные runtime-зависимости для запуска pipeline.
+# Для использования CUDA подберите версии torch / torchvision согласно
+# инструкции https://pytorch.org/get-started/locally/
+
+numpy>=1.26,<3
+opencv-python>=4.9
+PyYAML>=6.0
+Pillow>=10.0
+ultralytics>=8.3
+torch>=2.2
+torchvision>=0.17
